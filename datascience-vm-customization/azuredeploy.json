@@ -280,7 +280,7 @@
           "location": "[parameters('location')]",
           "apiVersion": "2020-12-01",
           "dependsOn": [
-            "[concat('Microsoft.Compute/virtualMachines/', variables('virtualMachineName'))]"
+            "[concat('Microsoft.Compute/virtualMachines/', concat(variables('virtualMachineName'),'-', parameters('Cpu-Gpu')))]"
           ],
           "properties": {
             "publisher": "Microsoft.Compute",
