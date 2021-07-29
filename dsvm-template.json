@@ -2,17 +2,17 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-      "adminUsername": {
-        "type": "string",
-        "metadata": {
-          "description": "Username for Administrator Account"
-        }
-      },
       "vmName": {
         "type": "string",
         "defaultValue": "vmName",
         "metadata": {
           "description": "The name of you Virtual Machine."
+        }
+      },    
+      "identity": {
+        "type": "string",
+        "metadata": {
+          "description": "The userAssignedIdentity of you Virtual Machine."
         }
       },
       "location": {
@@ -58,17 +58,6 @@
           "description": "Name of the Network Security Group"
         }
       },
-      "authenticationType": {
-        "type": "string",
-        "defaultValue": "sshPublicKey",
-        "allowedValues": [
-          "sshPublicKey",
-          "password"
-        ],
-        "metadata": {
-          "description": "Type of authentication to use on the Virtual Machine. SSH key is recommended."
-        }
-      },
       "adminPasswordOrKey": {
         "type": "securestring",
         "metadata": {
@@ -79,6 +68,7 @@
     "variables": {
       "networkInterfaceName": "[concat(parameters('vmName'),'NetInt')]",
       "virtualMachineName": "[parameters('vmName')]",
+      "adminUsername": "leonardo",
       "publicIpAddressName": "[concat(parameters('vmName'), 'PublicIP' )]",
       "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('subnetName'))]",
       "nsgId": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]",
@@ -99,12 +89,13 @@
         "ssh": {
           "publicKeys": [
             {
-              "path": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]",
+              "path": "/home/leonardo/.ssh/authorized_keys",
               "keyData": "[parameters('adminPasswordOrKey')]"
             }
           ]
         }
-      }
+      },
+      "authenticationType": "sshPublicKey"
     },
     "resources": [
       {
@@ -241,6 +232,13 @@
           "[resourceId('Microsoft.Network/networkInterfaces/', variables('networkInterfaceName'))]",
           "[resourceId('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]"
         ],
+        "identity": {
+          "type": "UserAssigned",
+          "userAssignedIdentities": {
+            "/subscriptions/3efc5bdf-be0e-44e7-b1d7-c08931e3c16c/resourcegroups/mrg-qi-1-preview-20210517084351/providers/Microsoft.ManagedIdentity/userAssignedIdentities/qi-identity": {}
+            // "pet": "[parameters('identity')]"
+          }
+        },
         "properties": {
           "hardwareProfile": {
             "vmSize": "[variables('vmSize')[parameters('Cpu-Gpu')]]"
@@ -268,9 +266,9 @@
           },
           "osProfile": {
             "computerName": "[variables('virtualMachineName')]",
-            "adminUsername": "[parameters('adminUsername')]",
+            "adminUsername": "[variables('adminUsername')]",
             "adminPassword": "[parameters('adminPasswordOrKey')]",
-            "linuxConfiguration": "[if(equals(parameters('authenticationType'), 'password'), json('null'), variables('linuxConfiguration'))]"
+            "linuxConfiguration": "[if(equals(variables('authenticationType'), 'password'), json('null'), variables('linuxConfiguration'))]"
           }
         }
       }
@@ -278,7 +276,8 @@
     "outputs": {
       "adminUsername": {
         "type": "string",
-        "value": "[parameters('adminUsername')]"
+        "value": "[variables('adminUsername')]"
       }
     }
   }
+  
