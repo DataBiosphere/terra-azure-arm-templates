@@ -276,21 +276,22 @@
       "resources": [
         {
           "name": "customize-vm",
-          "type": "extensions",
+          "type": "Extensions",
           "location": "[parameters('location')]",
-          "apiVersion": "2020-12-01",
+          "apiVersion": "2019-03-01",
           "dependsOn": [
-            "[concat('Microsoft.Compute/virtualMachines/', variables('virtualMachineName'))]"
+            "[concat('Microsoft.Compute/virtualMachines/', concat(variables('virtualMachineName'),'-', parameters('Cpu-Gpu')))]"
           ],
           "properties": {
-            "publisher": "Microsoft.Compute",
-            "type": "CustomScriptExtension",
-            "typeHandlerVersion": "1.7",
-            "autoUpgradeMinorVersion":true,
+            "publisher": "Microsoft.Azure.Extensions",
+            "type": "CustomScript",
+            "typeHandlerVersion": "2.1",
+            "autoUpgradeMinorVersion": true,
             "settings": {
-              "fileUris": [
-                "https://raw.githubusercontent.com/Qi77Qi/azure-arm-template/main/datascience-vm-customization/install_tnu.sh"
-              ],
+              "skipDos2Unix": false
+            },
+            "protectedSettings": {
+              "fileUris": ["https://raw.githubusercontent.com/DataBiosphere/terra-azure-arm-templates/rt-customization/datascience-vm-customization/install_tnu.sh"],
               "commandToExecute": "./install_tnu.sh"
             }
           }
