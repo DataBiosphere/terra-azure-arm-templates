@@ -288,10 +288,10 @@
             "typeHandlerVersion": "2.1",
             "autoUpgradeMinorVersion": true,
             "settings": {
-              "skipDos2Unix": false,
-              "fileUris": ["https://raw.githubusercontent.com/DataBiosphere/terra-azure-arm-templates/rt-customization/datascience-vm-customization/install_tnu.sh"]
+              "skipDos2Unix": false
             },
             "protectedSettings": {
+              "fileUris": ["https://raw.githubusercontent.com/DataBiosphere/terra-azure-arm-templates/rt-customization/datascience-vm-customization/install_tnu.sh"],
               "commandToExecute": "./install_tnu.sh"
             }
           }
