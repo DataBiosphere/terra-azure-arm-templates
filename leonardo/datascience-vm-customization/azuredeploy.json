@@ -291,7 +291,7 @@
               "skipDos2Unix": false
             },
             "protectedSettings": {
-              "fileUris": ["https://raw.githubusercontent.com/DataBiosphere/terra-azure-arm-templates/rt-customization/datascience-vm-customization/install_tnu.sh"],
+              "fileUris": ["https://raw.githubusercontent.com/DataBiosphere/terra-azure-arm-templates/main/leonardo/datascience-vm-customization/install_tnu.sh"],
               "commandToExecute": "./install_tnu.sh"
             }
           }
