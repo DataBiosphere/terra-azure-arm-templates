@@ -68,7 +68,7 @@
     "variables": {
       "networkInterfaceName": "[concat(parameters('vmName'),'NetInt')]",
       "virtualMachineName": "[parameters('vmName')]",
-      "adminUsername": "leonardo",
+      "adminUsername": "terra",
       "publicIpAddressName": "[concat(parameters('vmName'), 'PublicIP' )]",
       "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('subnetName'))]",
       "nsgId": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]",
@@ -89,18 +89,18 @@
         "ssh": {
           "publicKeys": [
             {
-              "path": "/home/leonardo/.ssh/authorized_keys",
+              "path": "/home/terra/.ssh/authorized_keys",
               "keyData": "[parameters('adminPasswordOrKey')]"
             }
           ]
         }
-      },
-      "authenticationType": "sshPublicKey"
+      }
     },
     "resources": [
+      // https://docs.microsoft.com/en-us/azure/templates/microsoft.network/networkinterfaces?tabs=json
       {
         "type": "Microsoft.Network/networkInterfaces",
-        "apiVersion": "2020-05-01",
+        "apiVersion": "2020-11-01",
         "name": "[variables('networkInterfaceName')]",
         "location": "[parameters('location')]",
         "dependsOn": [
@@ -136,7 +136,7 @@
         "properties": {
           "securityRules": [
             {
-              "name": "JupyterHub",
+              "name": "ApacheProxy",
               "properties": {
                 "priority": 1010,
                 "protocol": "TCP",
@@ -145,26 +145,13 @@
                 "sourceAddressPrefix": "*",
                 "sourcePortRange": "*",
                 "destinationAddressPrefix": "*",
-                "destinationPortRange": "8000"
-              }
-            },
-            {
-              "name": "RStudioServer",
-              "properties": {
-                "priority": 1020,
-                "protocol": "TCP",
-                "access": "Allow",
-                "direction": "Inbound",
-                "sourceAddressPrefix": "*",
-                "sourcePortRange": "*",
-                "destinationAddressPrefix": "*",
-                "destinationPortRange": "8787"
+                "destinationPortRange": "443"
               }
             },
             {
               "name": "SSH",
               "properties": {
-                "priority": 1030,
+                "priority": 1020,
                 "protocol": "TCP",
                 "access": "Allow",
                 "direction": "Inbound",
@@ -223,6 +210,7 @@
         },
         "kind": "[variables('storageAccountKind')]"
       },
+      // https://docs.microsoft.com/en-us/azure/templates/microsoft.compute/virtualmachines?tabs=json
       {
         "type": "Microsoft.Compute/virtualMachines",
         "apiVersion": "2019-07-01",
@@ -232,11 +220,11 @@
           "[resourceId('Microsoft.Network/networkInterfaces/', variables('networkInterfaceName'))]",
           "[resourceId('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]"
         ],
+        // This assigns managed identity to the VM
         "identity": {
           "type": "UserAssigned",
           "userAssignedIdentities": {
-            "/subscriptions/3efc5bdf-be0e-44e7-b1d7-c08931e3c16c/resourcegroups/mrg-qi-1-preview-20210517084351/providers/Microsoft.ManagedIdentity/userAssignedIdentities/qi-identity": {}
-            // "pet": "[parameters('identity')]"
+            "[parameters('identity')]": {}
           }
         },
         "properties": {
@@ -267,8 +255,31 @@
           "osProfile": {
             "computerName": "[variables('virtualMachineName')]",
             "adminUsername": "[variables('adminUsername')]",
-            "adminPassword": "[parameters('adminPasswordOrKey')]",
-            "linuxConfiguration": "[if(equals(variables('authenticationType'), 'password'), json('null'), variables('linuxConfiguration'))]"
+            "adminPassword": "Terra123",
+            // "adminPassword": "[parameters('adminPasswordOrKey')]",
+            "linuxConfiguration": "[variables('linuxConfiguration')]"
+          }
+        }
+      },
+      {
+        "name": "customize-vm",
+        "type": "Microsoft.Compute/virtualMachines/extensions",
+        "location": "[parameters('location')]",
+        "apiVersion": "2020-12-01",
+        "dependsOn": [
+          "[concat('Microsoft.Compute/virtualMachines/', variables('virtualMachineName'))]"
+        ],
+        "properties": {
+          "protectedSettings": {},
+          "publisher": "Microsoft.Compute",
+          "type": "CustomScriptExtension",
+          "typeHandlerVersion": "1.7",
+          "autoUpgradeMinorVersion":true,
+          "settings": {
+            "fileUris": [
+              "https://raw.githubusercontent.com/databiosphere/terra-azure-arm-templates/main/datascience-vm-customization/init.sh"
+            ],
+            "commandToExecute": "./init.sh"
           }
         }
       }
