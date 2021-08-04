@@ -160,6 +160,32 @@
                 "destinationAddressPrefix": "*",
                 "destinationPortRange": "22"
               }
+            },
+            {
+              "name": "JupyterHub",
+              "properties": {
+                "priority": 1030,
+                "protocol": "TCP",
+                "access": "Allow",
+                "direction": "Inbound",
+                "sourceAddressPrefix": "*",
+                "sourcePortRange": "*",
+                "destinationAddressPrefix": "*",
+                "destinationPortRange": "8000"
+              }
+            },
+            {
+              "name": "RStudioServer",
+              "properties": {
+                "priority": 1040,
+                "protocol": "TCP",
+                "access": "Allow",
+                "direction": "Inbound",
+                "sourceAddressPrefix": "*",
+                "sourcePortRange": "*",
+                "destinationAddressPrefix": "*",
+                "destinationPortRange": "8787"
+              }
             }
           ]
         }
@@ -259,29 +285,31 @@
             // "adminPassword": "[parameters('adminPasswordOrKey')]",
             "linuxConfiguration": "[variables('linuxConfiguration')]"
           }
-        }
-      },
-      {
-        "name": "customize-vm",
-        "type": "Microsoft.Compute/virtualMachines/extensions",
-        "location": "[parameters('location')]",
-        "apiVersion": "2020-12-01",
-        "dependsOn": [
-          "[concat('Microsoft.Compute/virtualMachines/', variables('virtualMachineName'))]"
-        ],
-        "properties": {
-          "protectedSettings": {},
-          "publisher": "Microsoft.Compute",
-          "type": "CustomScriptExtension",
-          "typeHandlerVersion": "1.7",
-          "autoUpgradeMinorVersion":true,
-          "settings": {
-            "fileUris": [
-              "https://raw.githubusercontent.com/databiosphere/terra-azure-arm-templates/main/datascience-vm-customization/init.sh"
+        },
+        "resources": [
+          {
+            "name": "customize-vm",
+            "type": "Extensions",
+            "location": "[parameters('location')]",
+            "apiVersion": "2020-12-01",
+            "dependsOn": [
+               "[concat('Microsoft.Compute/virtualMachines/', concat(variables('virtualMachineName'),'-', parameters('Cpu-Gpu')))]"
             ],
-            "commandToExecute": "./init.sh"
+            "properties": {
+              "settings": {},
+              "publisher": "Microsoft.Azure.Extensions",
+              "type": "CustomScript",
+              "typeHandlerVersion": "2.1",
+              "autoUpgradeMinorVersion":true,
+              "protectedSettings": {
+                "fileUris": [
+                  "https://raw.githubusercontent.com/DataBiosphere/terra-azure-arm-templates/248e9c355b50613abe2e1fe3ee735bbaba94c1c9/leonardo/init.sh"
+                ],
+                "commandToExecute": "./init.sh"
+              }
+            }
           }
-        }
+        ]
       }
     ],
     "outputs": {
