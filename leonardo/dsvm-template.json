@@ -283,33 +283,36 @@
             "adminUsername": "[variables('adminUsername')]",
             "adminPassword": "Terra123",
             // "adminPassword": "[parameters('adminPasswordOrKey')]",
-            "linuxConfiguration": "[variables('linuxConfiguration')]"
+            "linuxConfiguration": "[variables('linuxConfiguration')]",
+            "customData": ""
           }
-        },
-        "resources": [
-          {
-            "name": "customize-vm",
-            "type": "Extensions",
-            "location": "[parameters('location')]",
-            "apiVersion": "2020-12-01",
-            "dependsOn": [
-               "[concat('Microsoft.Compute/virtualMachines/', concat(variables('virtualMachineName'),'-', parameters('Cpu-Gpu')))]"
-            ],
-            "properties": {
-              "settings": {},
-              "publisher": "Microsoft.Azure.Extensions",
-              "type": "CustomScript",
-              "typeHandlerVersion": "2.1",
-              "autoUpgradeMinorVersion":true,
-              "protectedSettings": {
-                "fileUris": [
-                  "https://raw.githubusercontent.com/DataBiosphere/terra-azure-arm-templates/248e9c355b50613abe2e1fe3ee735bbaba94c1c9/leonardo/init.sh"
-                ],
-                "commandToExecute": "./init.sh"
-              }
-            }
-          }
-        ]
+        }
+        // ,
+        // "resources": [
+        //   // https://docs.microsoft.com/en-us/azure/virtual-machines/extensions/features-linux#azure-resource-manager-templates
+        //   {
+        //     "name": "customize-vm",
+        //     "type": "extensions",
+        //     "location": "[parameters('location')]",
+        //     "apiVersion": "2020-12-01",
+        //     "dependsOn": [
+        //        "[concat('Microsoft.Compute/virtualMachines/', concat(variables('virtualMachineName'),'-', parameters('Cpu-Gpu')))]"
+        //     ],
+        //     "properties": {
+        //       "protectedSettings": {},
+        //       "publisher": "Microsoft.Azure.Extensions",
+        //       "type": "CustomScript",
+        //       "typeHandlerVersion": "2.1",
+        //       "autoUpgradeMinorVersion":true,
+        //       "settings": {
+        //         "fileUris": [
+        //           "https://raw.githubusercontent.com/DataBiosphere/terra-azure-arm-templates/custom/leonardo/init.sh"
+        //         ],
+        //         "commandToExecute": "./init.sh"
+        //       }
+        //     }
+        //   }
+        // ]
       }
     ],
     "outputs": {
