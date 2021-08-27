@@ -1,0 +1,10 @@
+# This is just an example. We'll need to populate cert properly in the future (Maybe template this file in Leonardo)
+write_files:
+- content: this is going to be jupyter cert
+  owner: terra:terra
+  path: /home/terra/work/jupyter-server.crt
+  permissions: '0644'
+
+runcmd:
+  - az login --identity
+  - jupyter lab  --autoreload --NotebookApp.token='' --NotebookApp.password='' 
