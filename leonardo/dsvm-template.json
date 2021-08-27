@@ -283,36 +283,11 @@
             "adminUsername": "[variables('adminUsername')]",
             "adminPassword": "Terra123",
             // "adminPassword": "[parameters('adminPasswordOrKey')]",
-            "linuxConfiguration": "[variables('linuxConfiguration')]",
-            "customData": ""
+            "linuxConfiguration": "[variables('linuxConfiguration')]"
+            // ,
+            // "customData": "[base64('https://raw.githubusercontent.com/DataBiosphere/terra-azure-arm-templates/custom/leonardo/cloud-init.yaml')]"
           }
         }
-        // ,
-        // "resources": [
-        //   // https://docs.microsoft.com/en-us/azure/virtual-machines/extensions/features-linux#azure-resource-manager-templates
-        //   {
-        //     "name": "customize-vm",
-        //     "type": "extensions",
-        //     "location": "[parameters('location')]",
-        //     "apiVersion": "2020-12-01",
-        //     "dependsOn": [
-        //        "[concat('Microsoft.Compute/virtualMachines/', concat(variables('virtualMachineName'),'-', parameters('Cpu-Gpu')))]"
-        //     ],
-        //     "properties": {
-        //       "protectedSettings": {},
-        //       "publisher": "Microsoft.Azure.Extensions",
-        //       "type": "CustomScript",
-        //       "typeHandlerVersion": "2.1",
-        //       "autoUpgradeMinorVersion":true,
-        //       "settings": {
-        //         "fileUris": [
-        //           "https://raw.githubusercontent.com/DataBiosphere/terra-azure-arm-templates/custom/leonardo/init.sh"
-        //         ],
-        //         "commandToExecute": "./init.sh"
-        //       }
-        //     }
-        //   }
-        // ]
       }
     ],
     "outputs": {
