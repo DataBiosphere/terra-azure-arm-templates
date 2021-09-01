@@ -146,7 +146,6 @@
                 "sourcePortRange": "*",
                 "destinationAddressPrefix": "*",
                 "destinationPortRange": "443"
-<<<<<<< HEAD
               }
             },
             {
@@ -160,14 +159,12 @@
                 "sourcePortRange": "*",
                 "destinationAddressPrefix": "*",
                 "destinationPortRange": "22"
-=======
->>>>>>> add network security and managed identity
               }
             },
             {
               "name": "JupyterHub",
               "properties": {
-                "priority": 1020,
+                "priority": 1030,
                 "protocol": "TCP",
                 "access": "Allow",
                 "direction": "Inbound",
@@ -287,33 +284,8 @@
             "adminPassword": "Terra123",
             // "adminPassword": "[parameters('adminPasswordOrKey')]",
             "linuxConfiguration": "[variables('linuxConfiguration')]"
-<<<<<<< HEAD
-            // ,
+              // ,
             // "customData": "[base64('https://raw.githubusercontent.com/DataBiosphere/terra-azure-arm-templates/custom/leonardo/cloud-init.yaml')]"
-=======
-          }
-        }
-      },
-      {
-        "name": "customize-vm",
-        "type": "Microsoft.Compute/virtualMachines/extensions",
-        "location": "[parameters('location')]",
-        "apiVersion": "2020-12-01",
-        "dependsOn": [
-          "[concat('Microsoft.Compute/virtualMachines/', variables('virtualMachineName'))]"
-        ],
-        "properties": {
-          "protectedSettings": {},
-          "publisher": "Microsoft.Compute",
-          "type": "CustomScriptExtension",
-          "typeHandlerVersion": "1.7",
-          "autoUpgradeMinorVersion":true,
-          "settings": {
-            "fileUris": [
-              "https://raw.githubusercontent.com/databiosphere/terra-azure-arm-templates/main/datascience-vm-customization/init.sh"
-            ],
-            "commandToExecute": "./init.sh"
->>>>>>> add network security and managed identity
           }
         }
       }
