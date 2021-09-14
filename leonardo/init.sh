@@ -5,4 +5,4 @@
 az login --identity
 
 # Download certs from azure storage
-jupyter lab  --autoreload --NotebookApp.token='' --NotebookApp.password='' 
+jupyter lab  --autoreload --NotebookApp.token='' --NotebookApp.password=''
