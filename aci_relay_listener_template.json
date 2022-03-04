@@ -1,0 +1,85 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "containerGroups_qi_subnet3_name": {
+            "defaultValue": "qi-subnet3",
+            "type": "String"
+        },
+        "virtualNetworks_mrg_qi_20210930145737_vnet_externalid": {
+            "defaultValue": "/subscriptions/3efc5bdf-be0e-44e7-b1d7-c08931e3c16c/resourceGroups/mrg-qi-20210930145737/providers/Microsoft.Network/virtualNetworks/mrg-qi-20210930145737-vnet",
+            "type": "String"
+        },
+        "acr_username":{
+            "type": "String"
+        },
+        "acr_password":{
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.ContainerInstance/containerGroups",
+            "apiVersion": "2021-10-01",
+            "name": "[parameters('containerGroups_qi_subnet3_name')]",
+            "location": "westcentralus",
+            "properties": {
+                "sku": "Standard",
+                "containers": [
+                    {
+                        "name": "[parameters('containerGroups_qi_subnet3_name')]",
+                        "properties": {
+                            "image": "terradevacrpublic.azurecr.io/terra-azure-relay-listeners:53d7992",
+                            "ports": [
+                                {
+                                    "protocol": "TCP",
+                                    "port": 8080
+                                },
+                                {
+                                    "protocol": "TCP",
+                                    "port": 443
+                                }
+                            ],
+                            "environmentVariables": [
+                                {
+                                    "name": "LISTENER_RELAYCONNECTIONSTRING",
+                                    "value": "Endpoint=sb://qi-relay.servicebus.windows.net/;SharedAccessKeyName=listener;SharedAccessKey=R29mM8ltaqWjIXFLo1nGVMec4K7TsoL4leb5hi34LxI=;EntityPath=qi-2-16"
+                                },
+                                {
+                                    "name": "LISTENER_RELAYCONNECTIONNAME",
+                                    "value": "qi-2-16"
+                                },
+                                {
+                                    "name": "LISTENER_TARGETPROPERTIES_TARGETHOST",
+                                    "value": "http://10.1.0.5:8081"
+                                }
+                            ],
+                            "resources": {
+                                "requests": {
+                                    "memoryInGB": 1.5,
+                                    "cpu": 1
+                                }
+                            }
+                        }
+                    }
+                ],
+                "initContainers": [],
+                "imageRegistryCredentials": [
+                    {
+                        "server": "terradevacrpublic.azurecr.io",
+                        "username": "[parameters('acr_username')]",
+                        "password": "[parameters('acr_password')]"
+                    }
+                ],
+                "restartPolicy": "OnFailure",
+                "osType": "Linux",
+                "subnetIds": [
+                    {
+                        "id": "[concat(parameters('virtualNetworks_mrg_qi_20210930145737_vnet_externalid'), '/subnets/container_subnet2')]"
+                    }
+                ]
+            }
+        }
+    ]
+}
