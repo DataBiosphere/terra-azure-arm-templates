@@ -43,6 +43,12 @@
         },
         "zone": {
             "type": "string"
+        },
+        "vmStartupScriptUrl": {
+          "type": "string"
+        },
+        "shellCommandToExecute":{
+            "type": "string"
         }
     },
     "variables": {
@@ -155,11 +161,11 @@
                 "parameters": {
                     "fileUris": {
                         "value": [
-                            "<CUSTOM EXTENSION SCRIPT LINK FOR MS DSVM>"
+                            "[parameters('vmStartupScriptUrl')]"
                         ]
                     },
                     "commandToExecute": {
-                        "value": "sudo bash ms_dsvm_script_v5_cat.sh"
+                        "value": "[parameters('shellCommandToExecute')]"
                     },
                     "vmName": {
                         "value": "[parameters('virtualMachineName')]"

@@ -1,12 +1,16 @@
-az group deployment create --subscription <SUBSCRIPTION ID> ^
--g <RESORUCE_GROUP_NAME ^
---template-uri <TEMPLATE_JSON_LOCATION> ^
+#Windows command line command to run DSVM with Relay Listener
+az group deployment create ^
+--subscription <SUBSCRIPTION ID> ^
+-g <RESORUCE_GROUP_NAME> ^
+--template-[uri|file] <TEMPLATE_JSON_LOCATION> ^
 --parameters <PARAMETERS_JSON_LOCATION> ^
 --parameters location=<REGION> ^
 --parameters virtualNetworkId=/subscriptions/<SUBSCRIPTION ID>/resourceGroups/<RESOURCE_GROUP_NAME>/providers/Microsoft.Network/virtualNetworks/<RESOURCE_GROUP_NAME> ^
---parameters adminPassword=<VM PASSWORD> ^
+--parameters virtualMachineName=<VMNAME> ^
 --parameters virtualMachineSize=Standard_D8s_v3 ^
+--parameters adminUsername=<VM USERNAME> ^
+--parameters adminPassword=<VM PASSWORD> ^
 --parameters networkInterfaceName1=<NETWORK_INTERFACE_NAME> ^
 --parameters networkSecurityGroupName=<NETWORK_SECURITY_GROUP> ^
---parameters virtualMachineName=<VMNAME>^
---parameters adminUsername=azureuserec 
+--parameters vmStartupScriptUrl=<REFERENCE TO THE STARTUP SCRIPT> ^
+--parameters shellCommandToExecute="sudo bash <SHELL_SCRIPT_NAME_WHICH_CORRESPONDs_TO_THE_FILE_NAME_ABOVE> <RELAY_NAME> <RELAY_HYBRID_CONNECTION_NAME> <VM_NAME> <RELAY_HYBRID_CONNECTION_POLICY_NAME> <RELAY_HYBRID_CONNECTION_POLICY_KEY> <DOCKER_USER> <DOCKER_USER_PASSWORD>"
